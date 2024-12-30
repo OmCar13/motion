@@ -1,22 +1,19 @@
 "use client";
-
-import { Navbar } from "../(main)/_components/navbar";
+import { Navbar } from "./_components/navbar";
 
 const MarketingLayout = ({
-    children
+  children
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) => {
-    return (
-        <div className="h-full ">
-            <Navbar isCollapsed={false} onResetWidth={function (): void {
-                throw new Error("Function not implemented.");
-            } }/>
-            <main className="h-full pt-40">
-                {children}
-            </main>
-        </div>
-    )
+  return (
+    <div className="h-full ">
+      <Navbar />
+      <main className="h-full pt-40">
+        {children}
+      </main>
+    </div>
+  )
 }
 
 export default MarketingLayout;

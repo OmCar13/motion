@@ -1,67 +1,41 @@
 'use client'
 
-import { useMutation, useQuery } from "convex/react"
-import dynamic from "next/dynamic"
-import { useMemo } from "react"
-import React from 'react'
+import Image from "next/image"
+import { useUser } from "@clerk/clerk-react"
+import { PlusCircle } from "lucide-react"
+import { useMutation } from "convex/react"
 
-import { api } from "@/convex/_generated/api"
-import { Id } from "@/convex/_generated/dataModel"
-import { Toolbar } from "@/components/toolbar"
-import { Cover } from "@/components/cover"
-import { Skeleton } from "@/components/ui/skeleton"
+import {api} from '@/convex/_generated/api'
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
-interface DocumentIdPageProps {
-  params: {
-    documentId: Id<'documents'>
-  }
-}
 
-export default function DocumentIdPage({ params }: DocumentIdPageProps) {
-  const Editor = useMemo(() => dynamic(() => import("@/components/editor"), { ssr: false }), [])
+export default function DocumentsPage () {
 
-  const documentId = useMemo(() => params.documentId, [params.documentId])
+  const {user} = useUser()
+  const create = useMutation(api.documents.create)
 
-  const document = useQuery(api.documents.getById, {
-    documentId: documentId
-  })
+  const onCreate = () => {
+    const promise = create({title:'Untitled'})
 
-  const update = useMutation(api.documents.update)
-
-  const onChange = (content: string) => {
-    update({
-      id: documentId,
-      content
+    toast.promise(promise,{
+      loading:"Creating a new note...",
+      success:"New note created",
+      error:'Failed to create a new note'
     })
   }
 
-  if (document === undefined) {
-    return (
-      <div>
-        <Cover.Skeleton />
-        <div className="md:max-w-3xl lg:max-w-4xl mx-auto mt-10">
-          <div className="space-y-4 pl-8 pt-4">
-            <Skeleton className="h-14 w-[50%]" />
-            <Skeleton className="h-14 w-[80%]" />
-            <Skeleton className="h-14 w-[40%]" />
-            <Skeleton className="h-14 w-[60%]" />
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (document === null) {
-    return <div>Not Found</div>
-  }
-
-  return (
-    <div className="pb-40">
-      <Cover url={document.coverImage} />
-      <div className="md:max-w-3xl lg:md-max-w-4xl mx-auto">
-        <Toolbar initialData={document} />
-        <Editor onChange={onChange} initialContent={document.content} />
-      </div>
+return (
+    <div className="flex flex-col justify-center items-center h-full space-y-4">
+      <Image className="dark:hidden" src='/empty.png' alt="Empty" width='300' height='300'/>
+      <Image className="hidden dark:block" src='/empty-dark.png' alt="Empty" width='300' height='300'/>
+      <h2 className="text-lg font-medium">
+        Welcome to {user?.firstName}&apos;s Jotion
+      </h2>
+      <Button onClick={onCreate}>
+        <PlusCircle className="w-4 h-4 mr-2"/>
+        Create note
+      </Button>
     </div>
-  )
+)
 }
