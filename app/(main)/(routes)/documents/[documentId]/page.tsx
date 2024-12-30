@@ -20,7 +20,7 @@ if (!documentId) {
 return <div>Document not found</div>; // Or redirect to homepage
 }
 
-const Editor = useMemo(() => dynamic(() => import("@/components/editor"), { ssr: false }), []);
+// const Editor = useMemo(() => dynamic(() => import("@/components/editor"), { ssr: false }), []);
 
 const document = useQuery(api.documents.getById, {
 documentId: documentId as Id<'documents'>
@@ -60,7 +60,7 @@ return (
 <Cover url={document.coverImage} />
 <div className="md:max-w-3xl lg:md-max-w-4xl mx-auto">
 <Toolbar initialData={document} />
-<Editor onChange={onChange} initialContent={document.content} />
+{/* <Editor onChange={onChange} initialContent={document.content} /> */}
 </div>
 </div>
 );
